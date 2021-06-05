@@ -1,6 +1,7 @@
 package runnest_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/rodriez/runnest"
@@ -59,6 +60,28 @@ func TestRun(t *testing.T) {
 
 				if pong := resp.(string); pong != "" {
 					t.Errorf("Error: expected pong Received %s", pong)
+				}
+			},
+		},
+	}
+
+	runnest.NewRunest(t).Run(testCases)
+}
+
+func TestRunWithSkip(t *testing.T) {
+	testCases := []runnest.TestCase{
+		{
+			Name: "Given skip setted in true When the cases are executed Then skip this test",
+			Skip: true,
+			Given: func() interface{} {
+				return nil
+			},
+			When: func(req interface{}) (interface{}, error) {
+				return nil, errors.New("skip was ignored")
+			},
+			Then: func(t *testing.T, resp interface{}, e error) {
+				if e != nil {
+					t.Errorf("Error: %s", e.Error())
 				}
 			},
 		},
